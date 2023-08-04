@@ -1,5 +1,44 @@
 import random
 
+
+class Game:
+    def __init__(self, board, player1, player2):
+        self.board = board
+        self.player1 = player1
+        self.player2 = player2
+
+    def __repr__(self):
+        return ("<" + self.__class__.__name__ +
+                " player 1= " + str(self.player1.name) + " vs " +
+                " player 2= " + str(self.player2.name) +
+                ">")
+
+
+class Board:
+    def __init__(self):
+        pass
+
+    def __repr__(self):
+        return ("<" + self.__class__.__name__ +
+                ">")
+
+
+class Player:
+    def __init__(self, name, game_piece):
+        self.name = name
+        self.game_piece = game_piece
+        self.wins = 0
+        self.losses = 0
+
+    def __repr__(self):
+        return ("<" + self.__class__.__name__ +
+                " Name = " + str(self.name) +
+                " Piece = " + str(self.game_piece) +
+                " Wins = " + str(self.wins) +
+                " Losses = " + str(self.losses) +
+                ">")
+
+
 def drawBoard(board):
     # This function prints out the board that it was passed.
 
@@ -16,6 +55,7 @@ def drawBoard(board):
     print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
     print('   |   |')
 
+
 def inputPlayerLetter():
     # Lets the player type which letter they want to be.
     # Returns a list with the player's letter as the first item, and the computer's letter as the second.
@@ -30,6 +70,7 @@ def inputPlayerLetter():
     else:
         return ['O', 'X']
 
+
 def whoGoesFirst():
     # Randomly choose the player who goes first.
     if random.randint(0, 1) == 0:
@@ -37,25 +78,29 @@ def whoGoesFirst():
     else:
         return 'player'
 
+
 def playAgain():
     # This function returns True if the player wants to play again, otherwise it returns False.
     print('Do you want to play again? (yes or no)')
     return input().lower().startswith('y')
 
+
 def makeMove(board, letter, move):
     board[move] = letter
+
 
 def isWinner(bo, le):
     # Given a board and a player's letter, this function returns True if that player has won.
     # We use bo instead of board and le instead of letter so we don't have to type as much.
-    return ((bo[7] == le and bo[8] == le and bo[9] == le) or # across the top
-    (bo[4] == le and bo[5] == le and bo[6] == le) or # across the middle
-    (bo[1] == le and bo[2] == le and bo[3] == le) or # across the bottom
-    (bo[7] == le and bo[4] == le and bo[1] == le) or # down the left side
-    (bo[8] == le and bo[5] == le and bo[2] == le) or # down the middle
-    (bo[9] == le and bo[6] == le and bo[3] == le) or # down the right side
-    (bo[7] == le and bo[5] == le and bo[3] == le) or # diagonal
-    (bo[9] == le and bo[5] == le and bo[1] == le)) # diagonal
+    return ((bo[7] == le and bo[8] == le and bo[9] == le) or  # across the top
+            (bo[4] == le and bo[5] == le and bo[6] == le) or  # across the middle
+            (bo[1] == le and bo[2] == le and bo[3] == le) or  # across the bottom
+            (bo[7] == le and bo[4] == le and bo[1] == le) or  # down the left side
+            (bo[8] == le and bo[5] == le and bo[2] == le) or  # down the middle
+            (bo[9] == le and bo[6] == le and bo[3] == le) or  # down the right side
+            (bo[7] == le and bo[5] == le and bo[3] == le) or  # diagonal
+            (bo[9] == le and bo[5] == le and bo[1] == le))  # diagonal
+
 
 def getBoardCopy(board):
     # Make a duplicate of the board list and return it the duplicate.
@@ -66,9 +111,11 @@ def getBoardCopy(board):
 
     return dupeBoard
 
+
 def isSpaceFree(board, move):
     # Return true if the passed move is free on the passed board.
     return board[move] == ' '
+
 
 def getPlayerMove(board):
     # Let the player type in his move.
@@ -77,6 +124,7 @@ def getPlayerMove(board):
         print('What is your next move? (1-9)')
         move = input()
     return int(move)
+
 
 def chooseRandomMoveFromList(board, movesList):
     # Returns a valid move from the passed list on the passed board.
@@ -90,6 +138,7 @@ def chooseRandomMoveFromList(board, movesList):
         return random.choice(possibleMoves)
     else:
         return None
+
 
 def getComputerMove(board, computerLetter):
     # Given a board and the computer's letter, determine where to move and return that move.
@@ -126,6 +175,7 @@ def getComputerMove(board, computerLetter):
 
     # Move on one of the sides.
     return chooseRandomMoveFromList(board, [2, 4, 6, 8])
+
 
 def isBoardFull(board):
     # Return True if every space on the board has been taken. Otherwise return False.
