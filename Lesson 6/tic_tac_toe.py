@@ -41,11 +41,11 @@ class Game:
                 (bo[7] == gp and bo[5] == gp and bo[3] == gp) or  # diagonal
                 (bo[9] == gp and bo[5] == gp and bo[1] == gp))  # diagonal
 
-    def get_player_move(self):
+    def get_player_move(self, player):
         # Let the player type in his move.
         move = ' '
-        while move not in '1 2 3 4 5 6 7 8 9'.split() or not self.board.isSpaceFree(int(move)):
-            print('What is your next move? (1-9)')
+        while move not in '1 2 3 4 5 6 7 8 9'.split() or not self.board.is_space_free(int(move)):
+            print('{}, What is your next move? (1-9)'.format(player.name))
             move = input()
         return int(move)
 
@@ -54,6 +54,35 @@ class Game:
         # This function returns True if the player wants to play again, otherwise it returns False.
         print('Do you want to play again? (yes or no)')
         return input().lower().startswith('y')
+    
+    
+    def draw_init_board(self):
+        # This function prints out intial board layout for the players to understand the nubmber to box mappings
+        # "board" is a list of 10 strings representing the board (ignore index 0)
+        print('   |   |')
+        print(' ' + '7' + ' | ' +  '8' + ' | ' + '9')
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' +  '4' + ' | ' + '5' + ' | ' +  '6')
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' + '1' + ' | ' + '2' + ' | ' + '3')
+        print('   |   |')
+    
+    def welcome_msg(self):
+        print ("***************************************")
+        print ("Welcome to the game of TIC | TAC | TOE ")
+        print ("***************************************")
+        print ("")
+        print ("")
+        print ("=========== Board Layout ===========")
+        self.draw_init_board()
+        print ("=========== ------------- ===========")
+        print ("")
+        print ("")
+
 
 
 class Board:
@@ -122,26 +151,29 @@ class Player:
     def select_game_piece(self):
         letter = ''
         while not (letter == 'X' or letter == 'O'):
-            print('Do you want to be X or O?')
+            print('{} do you want to be X or O?'.format(self.name))
             letter = input().upper()
         self.game_piece = letter
 
 
 print('Welcome to Tic Tac Toe!')
+b = Board()
+name = input("Enter the Player 1 Name: ")
+p1 = Player(name)
+name = input("Enter the Player 2 Name: ")
+p2 = Player(name)
 
 while True:
     # Reset the board
-    b = Board()
-    name = input("Enter the Player 1 Name:")
-    p1 = Player(name)
-    name = input("Enter the Player 2 Name:")
-    p2 = Player(name)
+    b.reset_board()
     g = Game(b, p1, p2)
+
+    g.welcome_msg()
 
     player, opponent = g.who_goes_first()
     turn = player.name
 
-    print('The ' + player.name + ' will go first.')
+    print( player.name + ' will go first.')
 
     player.select_game_piece()
 
@@ -153,12 +185,12 @@ while True:
         if turn == player.name:
             # Player's turn.
             b.draw_board()
-            move = g.get_player_move()
+            move = g.get_player_move(player)
             b.make_move(player.game_piece, move)
 
             if g.is_winner(player.game_piece):
                 b.draw_board()
-                print('Hooray! {} have won the game!', player.name)
+                print('Hooray! {} have won the game!'.format (player.name))
                 gameIsPlaying = False
             else:
                 if b.is_board_full():
@@ -171,12 +203,12 @@ while True:
         else:
             # Opponent's turn.
             b.draw_board()
-            move = g.get_player_move()
+            move = g.get_player_move(opponent)
             b.make_move(opponent.game_piece, move)
 
             if g.is_winner(opponent.game_piece):
                 b.draw_board()
-                print('Hooray! {} have won the game!', opponent.name)
+                print('Hooray! {} have won the game!'.format(opponent.name))
                 gameIsPlaying = False
             else:
                 if b.is_board_full():
@@ -187,4 +219,5 @@ while True:
                     turn = player.name
 
     if not g.play_again():
+        print ("Thanks for playing with us {} and {}".format (player.name, opponent.name))
         break
