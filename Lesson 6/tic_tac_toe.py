@@ -13,25 +13,25 @@ class Game:
                 " player 2= " + str(self.player2.name) +
                 ">")
 
-    def assignGamePiece(self, game_piece, player):
-    # assign the Game piece for opponent player
+    @staticmethod
+    def assign_game_piece(game_piece, player):
+        # assign the Game piece for opponent player
         if game_piece == 'X':
-            opponent.game_piece = 'O'
+            player.game_piece = 'O'
         else:
-            opponent.game_piece = 'X'
+            player.game_piece = 'X'
 
-    def whoGoesFirst(self):
+    def who_goes_first(self):
         # Randomly choose the player who goes first.
         if random.randint(0, 1) == 0:
             return self.player1, self.player2
         else:
             return self.player2, self.player1
 
-    def isWinner(self, gp):
+    def is_winner(self, gp):
         bo = self.board.board
-
-        # Given a board and a player's game_peice, this function returns True if that player has won.
-        # We use bo instead of board and le instead of letter so we don't have to type as much.
+        # Given a board and a player's game_piece, this function returns True if that player has won.
+        # We use bo instead of board and le instead of letter, so we don't have to type as much.
         return ((bo[7] == gp and bo[8] == gp and bo[9] == gp) or  # across the top
                 (bo[4] == gp and bo[5] == gp and bo[6] == gp) or  # across the middle
                 (bo[1] == gp and bo[2] == gp and bo[3] == gp) or  # across the bottom
@@ -41,15 +41,16 @@ class Game:
                 (bo[7] == gp and bo[5] == gp and bo[3] == gp) or  # diagonal
                 (bo[9] == gp and bo[5] == gp and bo[1] == gp))  # diagonal
 
-    def getPlayerMove(self):
+    def get_player_move(self):
         # Let the player type in his move.
         move = ' '
         while move not in '1 2 3 4 5 6 7 8 9'.split() or not self.board.isSpaceFree(int(move)):
             print('What is your next move? (1-9)')
             move = input()
         return int(move)
-    
-    def playAgain(self):
+
+    @staticmethod
+    def play_again():
         # This function returns True if the player wants to play again, otherwise it returns False.
         print('Do you want to play again? (yes or no)')
         return input().lower().startswith('y')
@@ -57,17 +58,17 @@ class Game:
 
 class Board:
     def __init__(self):
-        self.board  = [' '] * 10
+        self.board = [' '] * 10
 
     def __repr__(self):
         return ("<" + self.__class__.__name__ +
                 ">")
-    def resetBoard (self):
+
+    def reset_board(self):
         self.board = [' '] * 10
 
-    def drawBoard(self):
+    def draw_board(self):
         # This function prints out the board that it was passed.
-
         # "board" is a list of 10 strings representing the board (ignore index 0)
         print('   |   |')
         print(' ' + self.board[7] + ' | ' + self.board[8] + ' | ' + self.board[9])
@@ -81,26 +82,24 @@ class Board:
         print(' ' + self.board[1] + ' | ' + self.board[2] + ' | ' + self.board[3])
         print('   |   |')
 
-    def makeMove(self, game_piece, move):
+    def make_move(self, game_piece, move):
         self.board[move] = game_piece
 
-    def getBoardCopy(self):
+    def get_board_copy(self, dup_board=None):
         # Make a duplicate of the board list and return it the duplicate.
-        dupeBoard = []
-
         for i in self.board:
-            dupeBoard.append(i)
+            dup_board.append(i)
 
-        return dupeBoard
+        return dup_board
 
-    def isSpaceFree (self, move):
+    def is_space_free(self, move):
         # Return true if the passed move is free on the passed board.
         return self.board[move] == ' '
 
-    def isBoardFull(self):
-        # Return True if every space on the board has been taken. Otherwise return False.
+    def is_board_full(self):
+        # Return True if every space on the board has been taken. Otherwise, return False.
         for i in range(1, 10):
-            if self.isSpaceFree(i):
+            if self.is_space_free(i):
                 return False
         return True
 
@@ -120,12 +119,13 @@ class Player:
                 " Losses = " + str(self.losses) +
                 ">")
 
-    def selectGamePiece(self):
+    def select_game_piece(self):
         letter = ''
         while not (letter == 'X' or letter == 'O'):
             print('Do you want to be X or O?')
             letter = input().upper()
         self.game_piece = letter
+
 
 print('Welcome to Tic Tac Toe!')
 
@@ -138,30 +138,31 @@ while True:
     p2 = Player(name)
     g = Game(b, p1, p2)
 
-    player, opponent  = g.whoGoesFirst()
+    player, opponent = g.who_goes_first()
     turn = player.name
 
-    player.selectGamePiece()
-
-    g.assignGamePiece(player.game_piece, opponent)
-
     print('The ' + player.name + ' will go first.')
+
+    player.select_game_piece()
+
+    g.assign_game_piece(player.game_piece, opponent)
+
     gameIsPlaying = True
 
     while gameIsPlaying:
         if turn == player.name:
             # Player's turn.
-            b.drawBoard()
-            move = g.getPlayerMove()
-            b.makeMove(player.game_piece, move)
+            b.draw_board()
+            move = g.get_player_move()
+            b.make_move(player.game_piece, move)
 
-            if g.isWinner(player.game_piece):
-                b.drawBoard()
+            if g.is_winner(player.game_piece):
+                b.draw_board()
                 print('Hooray! {} have won the game!', player.name)
                 gameIsPlaying = False
             else:
-                if b.isBoardFull():
-                    b.drawBoard()
+                if b.is_board_full():
+                    b.draw_board()
                     print('The game is a tie!')
                     break
                 else:
@@ -169,21 +170,21 @@ while True:
 
         else:
             # Opponent's turn.
-            b.drawBoard()
-            move = g.getPlayerMove()
-            b.makeMove(opponent.game_piece, move)
-            
-            if g.isWinner(opponent.game_piece):
-                b.drawBoard()
+            b.draw_board()
+            move = g.get_player_move()
+            b.make_move(opponent.game_piece, move)
+
+            if g.is_winner(opponent.game_piece):
+                b.draw_board()
                 print('Hooray! {} have won the game!', opponent.name)
                 gameIsPlaying = False
             else:
-                if b.isBoardFull():
-                    b.drawBoard()
+                if b.is_board_full():
+                    b.draw_board()
                     print('The game is a tie!')
                     break
                 else:
                     turn = player.name
 
-    if not g.playAgain():
+    if not g.play_again():
         break
