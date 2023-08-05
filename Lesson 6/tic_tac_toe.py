@@ -13,13 +13,6 @@ class Game:
                 " player 2= " + str(self.player2.name) +
                 ">")
 
-    @staticmethod
-    def assign_game_piece(game_piece, player):
-        # assign the Game piece for opponent player
-        if game_piece == 'X':
-            player.game_piece = 'O'
-        else:
-            player.game_piece = 'X'
 
     def who_goes_first(self):
         # Randomly choose the player who goes first.
@@ -55,8 +48,8 @@ class Game:
         print('Do you want to play again? (yes or no)')
         return input().lower().startswith('y')
     
-    
-    def draw_init_board(self):
+    @staticmethod
+    def draw_init_board():
         # This function prints out intial board layout for the players to understand the nubmber to box mappings
         # "board" is a list of 10 strings representing the board (ignore index 0)
         print('   |   |')
@@ -70,15 +63,16 @@ class Game:
         print('   |   |')
         print(' ' + '1' + ' | ' + '2' + ' | ' + '3')
         print('   |   |')
-    
-    def welcome_msg(self):
+
+    @staticmethod
+    def welcome_msg():
         print ("***************************************")
         print ("Welcome to the game of TIC | TAC | TOE ")
         print ("***************************************")
         print ("")
         print ("")
         print ("=========== Board Layout ===========")
-        self.draw_init_board()
+        Game.draw_init_board()
         print ("=========== ------------- ===========")
         print ("")
         print ("")
@@ -155,8 +149,15 @@ class Player:
             letter = input().upper()
         self.game_piece = letter
 
+    def assign_game_piece(self, opp_game_piece):
+        # assign the Game piece for  player based on opponents selection
+        if opp_game_piece == 'X':
+            self.game_piece = 'O'
+        else:
+            self.game_piece = 'X'
 
-print('Welcome to Tic Tac Toe!')
+
+Game.welcome_msg()
 b = Board()
 name = input("Enter the Player 1 Name: ")
 p1 = Player(name)
@@ -168,8 +169,6 @@ while True:
     b.reset_board()
     g = Game(b, p1, p2)
 
-    g.welcome_msg()
-
     player, opponent = g.who_goes_first()
     turn = player.name
 
@@ -177,7 +176,7 @@ while True:
 
     player.select_game_piece()
 
-    g.assign_game_piece(player.game_piece, opponent)
+    opponent.assign_game_piece(player.game_piece)
 
     gameIsPlaying = True
 
