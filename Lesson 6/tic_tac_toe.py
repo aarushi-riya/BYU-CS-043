@@ -13,20 +13,97 @@ class Game:
                 " player 2= " + str(self.player2.name) +
                 ">")
 
+    def assignGamePiece(self, game_piece, player):
+    # assign the Game piece for opponent player
+        if game_piece == 'X'
+            opponent.game_piece = 'O'
+        else
+            opponent.game_piece = 'X'
+
+    def whoGoesFirst(self):
+        # Randomly choose the player who goes first.
+        if random.randint(0, 1) == 0:
+            return self.player1, self.player2
+        else:
+            return self.player2, self.player1
+
+    def isWinner(self, gp):
+        bo = self.board
+
+        # Given a board and a player's game_peice, this function returns True if that player has won.
+        # We use bo instead of board and le instead of letter so we don't have to type as much.
+        return ((bo[7] == gp and bo[8] == gp and bo[9] == gp) or  # across the top
+                (bo[4] == gp and bo[5] == gp and bo[6] == gp) or  # across the middle
+                (bo[1] == gp and bo[2] == gp and bo[3] == gp) or  # across the bottom
+                (bo[7] == gp and bo[4] == gp and bo[1] == gp) or  # down the left side
+                (bo[8] == gp and bo[5] == gp and bo[2] == gp) or  # down the middle
+                (bo[9] == gp and bo[6] == gp and bo[3] == gp) or  # down the right side
+                (bo[7] == gp and bo[5] == gp and bo[3] == gp) or  # diagonal
+                (bo[9] == gp and bo[5] == gp and bo[1] == gp))  # diagonal
+
+    def getPlayerMove(self):
+        # Let the player type in his move.
+        move = ' '
+        while move not in '1 2 3 4 5 6 7 8 9'.split() or not self.board.isSpaceFree(int(move)):
+            print('What is your next move? (1-9)')
+            move = input()
+        return int(move)
+
 
 class Board:
     def __init__(self):
-        pass
+        self.board  = [' '] * 10
 
     def __repr__(self):
         return ("<" + self.__class__.__name__ +
                 ">")
+    def resetBoard (self):
+        self.board = [' '] * 10
+
+    def drawBoard(self):
+        # This function prints out the board that it was passed.
+
+        # "board" is a list of 10 strings representing the board (ignore index 0)
+        print('   |   |')
+        print(' ' + self.board[7] + ' | ' + self.board[8] + ' | ' + self.board[9])
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' + self.board[4] + ' | ' + self.board[5] + ' | ' + self.board[6])
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' + self.board[1] + ' | ' + self.board[2] + ' | ' + self.board[3])
+        print('   |   |')
+
+    def makeMove(self, game_piece, move):
+        self.board[move] = game_piece
+
+    def getBoardCopy(self):
+        # Make a duplicate of the board list and return it the duplicate.
+        dupeBoard = []
+
+        for i in self.board:
+            dupeBoard.append(i)
+
+        return dupeBoard
+
+    def isSpaceFree (self, move):
+        # Return true if the passed move is free on the passed board.
+        return self.board[move] == ' '
+
+    def isBoardFull(self):
+        # Return True if every space on the board has been taken. Otherwise return False.
+        for i in range(1, 10):
+            if self.isSpaceFree(i):
+                return False
+        return True
 
 
 class Player:
-    def __init__(self, name, game_piece):
+    def __init__(self, name):
         self.name = name
-        self.game_piece = game_piece
+        self.game_piece = None
         self.wins = 0
         self.losses = 0
 
@@ -38,23 +115,12 @@ class Player:
                 " Losses = " + str(self.losses) +
                 ">")
 
-
-def drawBoard(board):
-    # This function prints out the board that it was passed.
-
-    # "board" is a list of 10 strings representing the board (ignore index 0)
-    print('   |   |')
-    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
-    print('   |   |')
-    print('-----------')
-    print('   |   |')
-    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
-    print('   |   |')
-    print('-----------')
-    print('   |   |')
-    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
-    print('   |   |')
-
+    def selectGamePiece(self):
+        letter = ''
+        while not (letter == 'X' or letter == 'O'):
+            print('Do you want to be X or O?')
+            letter = input().upper()
+        self.game_piece = letter
 
 def inputPlayerLetter():
     # Lets the player type which letter they want to be.
@@ -71,59 +137,25 @@ def inputPlayerLetter():
         return ['O', 'X']
 
 
-def whoGoesFirst():
-    # Randomly choose the player who goes first.
-    if random.randint(0, 1) == 0:
-        return 'computer'
-    else:
-        return 'player'
-
-
 def playAgain():
     # This function returns True if the player wants to play again, otherwise it returns False.
     print('Do you want to play again? (yes or no)')
     return input().lower().startswith('y')
 
 
-def makeMove(board, letter, move):
-    board[move] = letter
 
 
-def isWinner(bo, le):
-    # Given a board and a player's letter, this function returns True if that player has won.
-    # We use bo instead of board and le instead of letter so we don't have to type as much.
-    return ((bo[7] == le and bo[8] == le and bo[9] == le) or  # across the top
-            (bo[4] == le and bo[5] == le and bo[6] == le) or  # across the middle
-            (bo[1] == le and bo[2] == le and bo[3] == le) or  # across the bottom
-            (bo[7] == le and bo[4] == le and bo[1] == le) or  # down the left side
-            (bo[8] == le and bo[5] == le and bo[2] == le) or  # down the middle
-            (bo[9] == le and bo[6] == le and bo[3] == le) or  # down the right side
-            (bo[7] == le and bo[5] == le and bo[3] == le) or  # diagonal
-            (bo[9] == le and bo[5] == le and bo[1] == le))  # diagonal
 
 
-def getBoardCopy(board):
-    # Make a duplicate of the board list and return it the duplicate.
-    dupeBoard = []
-
-    for i in board:
-        dupeBoard.append(i)
-
-    return dupeBoard
 
 
-def isSpaceFree(board, move):
-    # Return true if the passed move is free on the passed board.
-    return board[move] == ' '
 
 
-def getPlayerMove(board):
-    # Let the player type in his move.
-    move = ' '
-    while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(board, int(move)):
-        print('What is your next move? (1-9)')
-        move = input()
-    return int(move)
+
+
+
+
+
 
 
 def chooseRandomMoveFromList(board, movesList):
@@ -177,45 +209,55 @@ def getComputerMove(board, computerLetter):
     return chooseRandomMoveFromList(board, [2, 4, 6, 8])
 
 
-def isBoardFull(board):
-    # Return True if every space on the board has been taken. Otherwise return False.
-    for i in range(1, 10):
-        if isSpaceFree(board, i):
-            return False
-    return True
+
 
 
 print('Welcome to Tic Tac Toe!')
 
 while True:
     # Reset the board
-    theBoard = [' '] * 10
+    b = Board()
+    name = input("Enter the Player 1 Name:")
+    p1 = Player(name)
+    name = input("Enter the Player 2 Name:")
+    p2 = Player(name)
+    g = Game(b, p1, p2)
+
     playerLetter, computerLetter = inputPlayerLetter()
-    turn = whoGoesFirst()
-    print('The ' + turn + ' will go first.')
+    player, opponent  = g.whoGoesFirst()
+    turn = player.name
+
+    player.selectGamePiece()
+
+    g.assignGamePiece(player.game_piece, opponent)
+
+    print('The ' + player.name + ' will go first.')
     gameIsPlaying = True
 
     while gameIsPlaying:
-        if turn == 'player':
+        if turn == player.name:
             # Player's turn.
-            drawBoard(theBoard)
-            move = getPlayerMove(theBoard)
-            makeMove(theBoard, playerLetter, move)
+            b.drawBoard()
+            move = g.getPlayerMove()
+            b.makeMove(player.game_piece, move)
 
-            if isWinner(theBoard, playerLetter):
-                drawBoard(theBoard)
-                print('Hooray! You have won the game!')
+            if g.isWinner(player.game_piece):
+                b.drawBoard()
+                print('Hooray! {} have won the game!', player.name)
                 gameIsPlaying = False
             else:
-                if isBoardFull(theBoard):
-                    drawBoard(theBoard)
+                if b.isBoardFull():
+                    b.drawBoard()
                     print('The game is a tie!')
                     break
                 else:
-                    turn = 'computer'
+                    turn = opponent.name
 
         else:
-            # Computer's turn.
+            # Opponent's turn.
+            b.drawBoard()
+            move = g.getPlayerMove()
+            b.makeMove(player.game_piece, move)
             move = getComputerMove(theBoard, computerLetter)
             makeMove(theBoard, computerLetter, move)
 
